@@ -63,28 +63,39 @@ def AEtoile(start, isGoal, transitions, heuristique, cost):
         for etat in nPrimes:
             gnprime = n.g + cost(n, etat)
             nodle = AEtoileTuple(etat, gnprime, heuristique(etat) + gnprime, n)
+            print("Open: ")
             print(range(len(openNodes)))
+            print("Closed: ")
+            print(range(len(closed)))
 
             if nodle not in openNodes and nodle not in closed:
                 openNodes.append(nodle)
                 openNodes.sort(key=lambda x: x.f, reverse=True)
-                print("Basic Add")
-                if len(openNodes) == 50:
-                    print("Yolo")
+                #print("Basic Add")
             else:
-                listdeindex = []
-                for i in range(len(openNodes)):
+                i = 0
+                j = len(openNodes)
+                while i < j:
                     if openNodes[i].__eq__(nodle) and nodle.f <= openNodes[i].f:
-                        listdeindex.append(i)
                         openNodes.append(openNodes.pop(i))
                         openNodes.sort(key=lambda x: x.f, reverse=True)
-                        print("Redundant Add")
+                        #print("Redundant Add")
+                        i += 1
+                        j = len(openNodes)
+                    else:
+                        i += 1
 
-                for i in range(len(closed)):
+                i = 0
+                j = len(closed)
+                while i < j:
                     if closed[i].__eq__(nodle) and nodle.f <= closed[i].f:
                         openNodes.append(closed.pop(i))
                         openNodes.sort(key=lambda x: x.f, reverse=True)
-                        print("Replacement Add")
+                        #print("Replacement Add")
+                        i += 1
+                        j = len(closed)
+                    else:
+                        i += 1
 
 
     # This is pretty much the only function you gotta touch
@@ -103,13 +114,15 @@ def AEtoile(start, isGoal, transitions, heuristique, cost):
     print("About to return")
 
     finalList = []
-    nounou = closed[-1]
+    nounou = closed[0]
     while nounou is not None:
         finalList.append(nounou.etat)
         nounou = nounou.parent
 
 
-
+    for i in finalList:
+        print(i)
+    print(start)
     return finalList  # This juste returns a list with the first element, you need to return a list with all states
 
 
