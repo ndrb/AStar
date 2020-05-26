@@ -59,20 +59,33 @@ def AEtoile(start, isGoal, transitions, heuristique, cost):
             break
 
         nPrimes = transitions(n.etat)
+
         for etat in nPrimes:
             gnprime = n.g + cost(n, etat)
             nodle = AEtoileTuple(etat, gnprime, heuristique(etat) + gnprime, n)
+            print(range(len(openNodes)))
 
-            for i in range(len(openNodes)):
-                boolz = False
-                if openNodes[i].__eq__(nodle) and nodle.f <= openNodes[i].f:
-                    openNodes.append(openNodes.pop(i))
-                    boolz = True
-                if closed[i].__eq__(nodle) and nodle.f <= closed[i].f:
-                    openNodes.append(closed.pop(i))
-                    boolz = True
-                if not boolz:
-                    openNodes.append(nodle)
+            if nodle not in openNodes and nodle not in closed:
+                openNodes.append(nodle)
+                openNodes.sort(key=lambda x: x.f, reverse=True)
+                print("Basic Add")
+                if len(openNodes) == 50:
+                    print("Yolo")
+            else:
+                listdeindex = []
+                for i in range(len(openNodes)):
+                    if openNodes[i].__eq__(nodle) and nodle.f <= openNodes[i].f:
+                        listdeindex.append(i)
+                        openNodes.append(openNodes.pop(i))
+                        openNodes.sort(key=lambda x: x.f, reverse=True)
+                        print("Redundant Add")
+
+                for i in range(len(closed)):
+                    if closed[i].__eq__(nodle) and nodle.f <= closed[i].f:
+                        openNodes.append(closed.pop(i))
+                        openNodes.sort(key=lambda x: x.f, reverse=True)
+                        print("Replacement Add")
+
 
     # This is pretty much the only function you gotta touch
     # The heuristic function is already coded and you just call it to get the value from your current state
