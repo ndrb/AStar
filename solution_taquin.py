@@ -14,8 +14,9 @@ from pdb import set_trace as dbg
 # AEtoile Nodes
 class AEtoileTuple:
 
-    def __init__(self, etat, f, parent=None):
+    def __init__(self, etat, g, f, parent=None):
         self.etat = etat
+        self.g = g
         self.f = f
         self.parent = parent
 
@@ -31,70 +32,74 @@ class AEtoileTuple:
         return not (self == autre)
 
 
+# noinspection SpellCheckingInspection
 def AEtoile(start, isGoal, transitions, heuristique, cost):
-
-    #Reminder: f(n) tries to calculate the optimal path between n and the goal
-    #We separate the calculation of f(n) into two parts:
+    # Reminder: f(n) tries to calculate the optimal path between n and the goal
+    # We separate the calculation of f(n) into two parts:
     #   g(n): cout du meilleur chemin du depart jusqua n
     #   h(n): estimated optimal cost from n to goal, the heuristique function
 
     n = None
     nPrime = None
-    open = []
+    openNodes = []
     closed = []
 
-    starterNode = AEtoileTuple(start, heuristique(start), None)
-    open.append(starterNode)
-    print(isinstance(start, AEtoileTuple))
-    while(1):
-        #print("while lol")
-        if not open:
+    starterNode = AEtoileTuple(start, 0, heuristique(start) + 0, None)
+    openNodes.append(starterNode)
+
+    while 1:
+        # print("while lol")
+        if not openNodes:
             break
-        n = open[-1]
-        container = open.pop(-1)
+        n = openNodes[-1]
+        container = openNodes.pop(-1)
         closed.append(container)
 
         if isGoal(n.etat):
-           break
+            break
 
         nPrimes = transitions(n.etat)
         for etat in nPrimes:
-            gn = n.f
-            gnprime = gn + cost(n, etat)
-            nodle = AEtoileTuple(etat, heuristique(etat)+gnprime, n)
+            gnprime = n.g + cost(n, etat)
+            nodle = AEtoileTuple(etat, gnprime, heuristique(etat) + gnprime, n)
 
-            boolz = False;
-            for i in range(len(open)):
-                if open[i].__eq__(nodle) and nodle.f <= open[i].f:
-                    open.append(open.pop(i))
+            for i in range(len(openNodes)):
+                boolz = False
+                if openNodes[i].__eq__(nodle) and nodle.f <= openNodes[i].f:
+                    openNodes.append(openNodes.pop(i))
                     boolz = True
-            for i in range(len(closed)):
                 if closed[i].__eq__(nodle) and nodle.f <= closed[i].f:
-                    open.append(closed.pop(i))
+                    openNodes.append(closed.pop(i))
                     boolz = True
+                if not boolz:
+                    openNodes.append(nodle)
 
-            if boolz == False:
-                open.append(nodle)
+    # This is pretty much the only function you gotta touch
+    # The heuristic function is already coded and you just call it to get the value from your current state
+    # to the final state, this is done with a recherche en largeur
 
+    # print(start) # affiche l'etat de depart
 
+    # We want to use the AEToileTuple which are our objects
+    # start is an object of type TaquinEtat
+    # Giving the first state this will give you all the possible and returns a list of neighbouring states
 
+    # Now that I have all the next possible states, I must chose the most optimal one and then add it to my closed list
 
-
-
-    #This is pretty much the only function you gotta touch
-    #The heuristique funtion is already coded and you just call it to get the value from your current state to the final state, this is done with a recherche en largeur
-
-    #print(start) # affiche l'etat de depart
-
-    #We want to use the AEToileTuple which are our objects
-    #start is an object of type TaquinEtat
-    #Giving the first state this will give you all the possible and returns a list of neighbouring states
-
-    #Now that I have all the next possible states, I must chose the most optimal one and then add it to my closed list
-
-    #Has to be the optimal solution
+    # Has to be the optimal solution
     print("About to return")
-    return closed # This juste returns a list with the first element, you need to return a list with all states
+
+    finalList = []
+    nounou = closed[-1]
+    while nounou is not None:
+        finalList.append(nounou.etat)
+        nounou = nounou.parent
+
+
+
+    return finalList  # This juste returns a list with the first element, you need to return a list with all states
+
+
 #
 # joueur_taquin : Fonction qui calcule le chemin, suite d'états, optimal afin de complété
 #                  le puzzle.
@@ -117,4 +122,5 @@ def AEtoile(start, isGoal, transitions, heuristique, cost):
 
 def joueur_taquin(etat_depart, fct_estEtatFinal, fct_transitions, fct_heuristique):
     def fct_cout(x, y): return 1
+
     return AEtoile(etat_depart, fct_estEtatFinal, fct_transitions, fct_heuristique, fct_cout)
