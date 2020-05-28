@@ -63,10 +63,10 @@ def AEtoile(start, isGoal, transitions, heuristique, cost):
         for etat in nPrimes:
             gnprime = n.g + cost(n, etat)
             nodle = AEtoileTuple(etat, gnprime, heuristique(etat) + gnprime, n)
-            print("Open: ")
-            print(range(len(openNodes)))
-            print("Closed: ")
-            print(range(len(closed)))
+            # print("Open: ")
+            # print(range(len(openNodes)))
+            # print("Closed: ")
+            # print(range(len(closed)))
 
             if nodle not in openNodes and nodle not in closed:
                 openNodes.append(nodle)
@@ -111,19 +111,21 @@ def AEtoile(start, isGoal, transitions, heuristique, cost):
     # Now that I have all the next possible states, I must chose the most optimal one and then add it to my closed list
 
     # Has to be the optimal solution
-    print("About to return")
+    #print("About to return")
 
     finalList = []
-    nounou = closed[0]
+    nounou = closed[-1]
     while nounou is not None:
         finalList.append(nounou.etat)
         nounou = nounou.parent
 
 
-    for i in finalList:
-        print(i)
-    print(start)
-    return finalList  # This juste returns a list with the first element, you need to return a list with all states
+    #for i in finalList:
+        #print(i)
+    actualFinalList = []
+    for j in reversed(finalList):
+        actualFinalList.append(j)
+    return actualFinalList  # This juste returns a list with the first element, you need to return a list with all states
 
 
 #
