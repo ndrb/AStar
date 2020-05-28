@@ -56,9 +56,9 @@ def joueur_tictactoe(etat, fct_but, fct_transitions, str_joueur):
             best_value = i[1]
             best_action = i[0]
 
-    print(best_value)
-    print(best_action)
-    print("Done")
+    # print(best_value)
+    # print(best_action)
+    # print("Done")
 
     action = best_action
     # action = random.choice(list(fct_transitions(etat)))
