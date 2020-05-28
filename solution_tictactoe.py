@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 import math
+import random
 #####
 # VotreNom (VotreMatricule) .~= À MODIFIER =~.
 ###
 
 from pdb import set_trace as dbg  # Utiliser dbg() pour faire un break dans votre code.
 
-import random
 import numpy as np
 
 
@@ -32,25 +32,36 @@ import numpy as np
 # retour: Cette fonction retourne l'action optimal à joueur pour le joueur actuel c.-à-d. 'str_joueur'.
 ###
 def joueur_tictactoe(etat, fct_but, fct_transitions, str_joueur):
-    # TODO: Implémenter un joueur alpha-beta
     # Find the next best move
     # This function needs to find the most efficient NEXT STEP to the game depending on the player
     # Do we really need to go into depth or we only need to check the following function?
-    value = (alphabeta(-math.inf, math.inf, etat, fct_but, fct_transitions, str_joueur))
-    #value = []
-    #print(str_joueur)
-    #for i in fct_transitions(etat).items():
-        #value.append(alphabeta(-math.inf, math.inf, i[1], fct_but, fct_transitions, str_joueur))
-    print(value)
+    # value = (alphabeta(-math.inf, math.inf, etat, fct_but, fct_transitions, str_joueur))
+    values = [] # List avec des dictionnaire
+    for i in fct_transitions(etat).items():
+        values.append([i[0], (alphabeta(-math.inf, math.inf, i[1], fct_but, fct_transitions, str_joueur))])
+
+    print(values)
+
+    if str_joueur == 'X':
+        best_value = -math.inf
+    else:
+        best_value = math.inf
+
+    best_action = ""
+    for i in values:
+        if str_joueur == 'X' and i[1] > best_value:
+            best_value = i[1]
+            best_action = i[0]
+        if str_joueur == 'O' and i[1] < best_value:
+            best_value = i[1]
+            best_action = i[0]
+
+    print(best_value)
+    print(best_action)
     print("Done")
-    # childrenStates = fct_transitions(etat).items()
-    # for x in childrenStates:
-    #    print(fct_but(x[1]))
 
-
-
-    # Retourne une action aléatoire (.~= À MODIFIER =~.)
-    action = random.choice(list(fct_transitions(etat)))
+    action = best_action
+    # action = random.choice(list(fct_transitions(etat)))
     return action
 
 
